@@ -8,6 +8,7 @@ COIN_CLI='Lindad'
 COIN_PATH='/usr/local/bin/'
 COIN_TGZ='https://github.com/Lindacoin/Linda/releases/download/2.0.0.1/Unix.Lindad.v2.0.0.1g.tar.gz'
 COIN_ZIP=$(echo $COIN_TGZ | awk -F'/' '{print $NF}')
+COIN_BLOCK='https://github.com/zoldur/Linda/releases/download/v2.0.0.1/blocks.tar.gz'
 COIN_NAME='Linda'
 COIN_PORT=33820
 RPC_PORT=33821
@@ -31,6 +32,14 @@ function download_node() {
   clear
 }
 
+function download_blocks() {
+ echo -e "Downloading $COIN_NAME blocks. This will take a while"
+ cd $CONFIGFOLDER
+ wget -q $COIN_BLOCK
+ tar xvzf blocks.tar.gz >/dev/null 2>&1
+ rm blocks.tar.gz
+ cd -
+}
 
 function configure_systemd() {
   cat << EOF > /etc/systemd/system/$COIN_NAME.service
@@ -344,6 +353,7 @@ function setup_node() {
   create_config
   create_key
   update_config
+  download_blocks
   enable_firewall
   important_information
   configure_systemd
